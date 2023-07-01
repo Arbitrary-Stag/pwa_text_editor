@@ -23,10 +23,17 @@ export default class {
     });
 
     // When the editor is ready, set the value to whatever is stored in indexeddb.
-    // Fall back to localStorage if nothing is stored in indexeddb, and if neither is available, set the value to header.
     getDb().then((data) => {
       console.info('Loaded data from IndexedDB, injecting into editor');
-      this.editor.setValue(data || localData || header);
+      let initialValue = ''; // Default initial value
+    
+      if (typeof data === 'string') {
+        initialValue = data;
+      } else {
+        initialValue = localData || header; // Fallback to other sources if data is invalid or missing
+      }
+    
+      this.editor.setValue(initialValue);
     });
 
     this.editor.on('change', () => {
